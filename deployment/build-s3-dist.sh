@@ -150,7 +150,7 @@ echo "/packages/$file" >> requirements.txt;
 # If Docker is not installed, then we'll use prebuilt Lambda layer zip files.
 echo "Running build-lambda-layer.sh"
 rm -rf lambda_layer-python-* lambda_layer-python*.zip
-./build-lambda-layer.sh requirements.txt > /dev/null
+./build-lambda-layer.sh requirements.txt
 if [ $? -eq 0 ]; then
   mv lambda_layer-python3.6.zip media_insights_engine_lambda_layer_python3.6.zip
   mv lambda_layer-python3.7.zip media_insights_engine_lambda_layer_python3.7.zip
@@ -594,7 +594,7 @@ if ! [ -x "$(command -v chalice)" ]; then
 fi
 
 # Remove chalice deployments to force redeploy when there are changes to configuration only
-# Otherwise, chalice will use the existing deployment package 
+# Otherwise, chalice will use the existing deployment package
 [ -e .chalice/deployments ] && rm -rf .chalice/deployments
 
 echo "running chalice..."
@@ -628,7 +628,7 @@ if ! [ -x "$(command -v chalice)" ]; then
 fi
 
 # Remove chalice deployments to force redeploy when there are changes to configuration only
-# Otherwise, chalice will use the existing deployment package 
+# Otherwise, chalice will use the existing deployment package
 [ -e .chalice/deployments ] && rm -rf .chalice/deployments
 
 chalice package --merge-template external_resources.json dist

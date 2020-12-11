@@ -11,24 +11,18 @@ pip3.6 install -q -r /packages/requirements.txt -t /packages/lambda_layer-python
 echo "================================================================================"
 echo "Installing MediaInfo package"
 echo "================================================================================"
-# MediaInfo version 19.09 works but 20.03 does not. So, hardcoding to 19.09 instead of latest.
-#VERSION=$(curl -s https://github.com/MediaArea/MediaInfoLib/releases/latest | cut -d "\"" -f 2 | awk -F "/" '{print $NF}' | tr -d 'v')
-VERSION="19.09"
+VERSION="20.09"
 
 echo "MediaInfo latest version = v$VERSION"
-URL=https://mediaarea.net/download/binary/libmediainfo0/${VERSION}/MediaInfo_DLL_${VERSION}_GNU_FromSource.tar.gz
+URL=https://mediaarea.net/download/binary/libmediainfo0/${VERSION}/MediaInfoLib_DLL_${VERSION}_Lambda.zip
 echo "Downloading MediaInfo from $URL"
-cd /
-curl $URL -o mediainfo.tgz || exit 1
-tar -xzf mediainfo.tgz
-echo "Compiling MediaInfo library..."
-cd MediaInfo_DLL_GNU_FromSource/
-./SO_Compile.sh > /dev/null
-echo "Finished building MediaInfo library files:"
-find /MediaInfo_DLL_GNU_FromSource/MediaInfoLib/Project/GNU/Library/.libs/
-cp /MediaInfo_DLL_GNU_FromSource/MediaInfoLib/Project/GNU/Library/.libs/* /packages/lambda_layer-python-3.6/python/ || exit 1
-cp /MediaInfo_DLL_GNU_FromSource/MediaInfoLib/Project/GNU/Library/.libs/* /packages/lambda_layer-python-3.7/python/ || exit 1
-cp /MediaInfo_DLL_GNU_FromSource/MediaInfoLib/Project/GNU/Library/.libs/* /packages/lambda_layer-python-3.8/python/ || exit 1
+curl $URL -o mediainfo.zip || exit 1
+unzip mediainfo.zip -d mediainfo
+echo "Finished downloading MediaInfo library files:"
+find ./mediainfo/lib/
+cp ./mediainfo/lib/* /packages/lambda_layer-python-3.6/python/ || exit 1
+cp ./mediainfo/lib/* /packages/lambda_layer-python-3.7/python/ || exit 1
+cp ./mediainfo/lib/* /packages/lambda_layer-python-3.8/python/ || exit 1
 
 echo "================================================================================"
 echo "Creating zip files for Lambda layers"
