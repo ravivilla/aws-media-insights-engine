@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workflowapi &#8212; AWS Media Insights Engine</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+    
+
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="_static/aws-sdk-2.826.0.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+        
+        $(function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+                }
+            );
+        });
+
+        $(function sendAnonVistorId() {
+            FingerprintJS.load().then(fp => {
+                // The FingerprintJS agent is ready.
+                // Get a visitor identifier when you'd like to.
+                fp.get().then(result => {
+                    AWS.config.region = 'us-west-2'; 
+                    AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId: 'us-west-2:a2573bbc-f734-4ef9-84ba-30b702b5b958'});
+                    var pinpoint = new AWS.Pinpoint({apiVersion: '2016-12-01'});
+                    
+                    // This is the anonymous visitor identifier:
+                    const anonVisitorId = result.visitorId;
+                    var param = {
+                    ApplicationId: 'fea7ddb98ab9411787a3cf43d835a0d7',
+                    EventsRequest: {
+                        BatchItem: {}
+                        }
+                    };
+
+                    /* create the event parameter */
+                    var eventParam = {
+                        Endpoint: {
+                            Address: anonVisitorId,
+                            ChannelType: 'CUSTOM',
+                            }
+                        };
+
+                    /* attach the event values */
+                    eventParam['Events'] = [{
+                        EventType: 'mie_docs_page_view',
+                        Timestamp: (new Date()).toISOString()
+                    }];
+
+                    var endpointId = eventParam.Endpoint.Address + 'DOCS'
+                    param.EventsRequest.BatchItem[endpointId] = eventParam; 
+
+                    pinpoint.putEvents(param, function(err, data) {
+                        if (err) console.log(err, err.stack); 
+                        else     console.log(data);
+                    });
+                        });
+                    });
+        });
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
+        onload="sendAnonVistorId()"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dataplaneapi" href="dataplane.html" />
+    <link rel="prev" title="Documentation" href="../index.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+		  <span class="logo-icon"><img src="../_static/img/MIE_logo_icon.png" /></span>
+                </a>
+            </div>
+
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../tutorials/index.html">Tutorials</a></li>
+                <li class="site-page"><a href="../samples/index.html">Samples</a></li>
+                <li class="site-page"><a href="../main.html">Documentation</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/aws-media-insights-engine">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    
+  <div class="chalice-app section" id="workflowapi">
+<h1 class="chalice-appname">Workflowapi<a class="headerlink" href="#workflowapi" title="Permalink to this headline">¶</a></h1>
+<div class="chalice-route section" id="index">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/</code><a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
+<p>Test the API endpoint</p>
+<p>Returns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;hello&quot;</span><span class="p">:</span><span class="s2">&quot;world&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Raises:</p>
+<blockquote>
+<div><p>500: ChaliceViewError - internal server error</p>
+</div></blockquote>
+</div>
+<div class="chalice-route section" id="create-vocabulary">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/create_vocabulary</code><a class="headerlink" href="#create-vocabulary" title="Permalink to this headline">¶</a></h2>
+<p>Create an Amazon Transcribe custom vocabulary.</p>
+<p>Body:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;vocabulary_name&#39;</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;language_code&#39;</span><span class="o">=</span><span class="s1">&#39;af-ZA&#39;</span><span class="o">|</span><span class="s1">&#39;ar-AE&#39;</span><span class="o">|</span><span class="s1">&#39;ar-SA&#39;</span><span class="o">|</span><span class="s1">&#39;cy-GB&#39;</span><span class="o">|</span><span class="s1">&#39;da-DK&#39;</span><span class="o">|</span><span class="s1">&#39;de-CH&#39;</span><span class="o">|</span><span class="s1">&#39;de-DE&#39;</span><span class="o">|</span><span class="s1">&#39;en-AB&#39;</span><span class="o">|</span><span class="s1">&#39;en-AU&#39;</span><span class="o">|</span><span class="s1">&#39;en-GB&#39;</span><span class="o">|</span><span class="s1">&#39;en-IE&#39;</span><span class="o">|</span><span class="s1">&#39;en-IN&#39;</span><span class="o">|</span><span class="s1">&#39;en-US&#39;</span><span class="o">|</span><span class="s1">&#39;en-WL&#39;</span><span class="o">|</span><span class="s1">&#39;es-ES&#39;</span><span class="o">|</span><span class="s1">&#39;es-US&#39;</span><span class="o">|</span><span class="s1">&#39;fa-IR&#39;</span><span class="o">|</span><span class="s1">&#39;fr-CA&#39;</span><span class="o">|</span><span class="s1">&#39;fr-FR&#39;</span><span class="o">|</span><span class="s1">&#39;ga-IE&#39;</span><span class="o">|</span><span class="s1">&#39;gd-GB&#39;</span><span class="o">|</span><span class="s1">&#39;he-IL&#39;</span><span class="o">|</span><span class="s1">&#39;hi-IN&#39;</span><span class="o">|</span><span class="s1">&#39;id-ID&#39;</span><span class="o">|</span><span class="s1">&#39;it-IT&#39;</span><span class="o">|</span><span class="s1">&#39;ja-JP&#39;</span><span class="o">|</span><span class="s1">&#39;ko-KR&#39;</span><span class="o">|</span><span class="s1">&#39;ms-MY&#39;</span><span class="o">|</span><span class="s1">&#39;nl-NL&#39;</span><span class="o">|</span><span class="s1">&#39;pt-BR&#39;</span><span class="o">|</span><span class="s1">&#39;pt-PT&#39;</span><span class="o">|</span><span class="s1">&#39;ru-RU&#39;</span><span class="o">|</span><span class="s1">&#39;ta-IN&#39;</span><span class="o">|</span><span class="s1">&#39;te-IN&#39;</span><span class="o">|</span><span class="s1">&#39;tr-TR&#39;</span><span class="o">|</span><span class="s1">&#39;zh-CN&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;s3uri&#39;</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>This is a proxy for boto3 create_vocabulary and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/transcribe.html#TranscribeService.Client.create_vocabulary">the boto3 documentation for details</a></p>
+</dd>
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="delete-vocabulary">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/delete_vocabulary</code><a class="headerlink" href="#delete-vocabulary" title="Permalink to this headline">¶</a></h2>
+<p>Delete an Amazon Transcribe custom vocabulary.</p>
+<p>Body:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;vocabulary_name&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>This is a proxy for boto3 delete_vocabulary and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/transcribe.html#TranscribeService.Client.delete_vocabulary">the boto3 documentation for details</a></p>
+</div></blockquote>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="download-vocabulary">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/download_vocabulary</code><a class="headerlink" href="#download-vocabulary" title="Permalink to this headline">¶</a></h2>
+<p>Get the contents of an Amazon Transcribe custom vocabulary.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;vocabulary_name&quot;</span><span class="p">:</span> <span class="n">string</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A list of vocabulary terms.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="s2">&quot;Phrase&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+        <span class="s2">&quot;IPA&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+        <span class="s2">&quot;SoundsLike&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+        <span class="s2">&quot;DisplayAs&quot;</span><span class="p">:</span> <span class="n">string</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-vocabulary">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/get_vocabulary</code><a class="headerlink" href="#get-vocabulary" title="Permalink to this headline">¶</a></h2>
+<p>Get the description for an Amazon Transcribe custom vocabulary.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>This is a proxy for boto3 get_vocabulary and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/transcribe.html#TranscribeService.Client.get_vocabulary">the boto3 documentation for details</a></p>
+</dd>
+<dt>Raises:</dt><dd><p>See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/transcribe.html#TranscribeService.Client.get_vocabulary">the boto3 documentation for details</a></p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-vocabularies">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/service/transcribe/list_vocabularies</code><a class="headerlink" href="#list-vocabularies" title="Permalink to this headline">¶</a></h2>
+<p>List all the available Amazon Transcribe custom vocabularies in this region.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>This is a proxy for boto3 list_vocabularies and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/transcribe.html#TranscribeService.Client.list_vocabularies">the boto3 documentation for details</a></p>
+</dd>
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="create-terminology">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/create_terminology</code><a class="headerlink" href="#create-terminology" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Create an Amazon Translate Terminology.  If the terminology already exists, overwrite the terminology</dt><dd><p>with this new content.</p>
+</dd>
+</dl>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;terminology_name&#39;</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;terminology_csv&#39;</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>This is a proxy for boto3 create_vocabulary and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/translate.html#TranslateService.Client.create_terminology">the boto3 documentation for details</a></p>
+</dd>
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="delete-terminology">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/delete_terminology</code><a class="headerlink" href="#delete-terminology" title="Permalink to this headline">¶</a></h2>
+<p>Delete an Amazon Translate Terminology</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;terminology_name&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Returns:</p>
+<blockquote>
+<div><p>This is a proxy for boto3 delete_terminology and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/translate.html#Translate.Client.delete_terminology">the boto3 documentation for details</a></p>
+</div></blockquote>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="download-terminology">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/download_terminology</code><a class="headerlink" href="#download-terminology" title="Permalink to this headline">¶</a></h2>
+<p>Get the CSV formated contents of an Amazon Translate terminology.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;terminology_name&#39;</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A string contining the CSV formatted Amazon Transcribe terminology</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;terminology_csv&#39;</span><span class="p">:</span> <span class="n">string</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-terminology">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/get_terminology</code><a class="headerlink" href="#get-terminology" title="Permalink to this headline">¶</a></h2>
+<p>Get a link to the CSV formatted description for an Amazon Translate terminology.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;terminology_name&#39;</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>This is a proxy for boto3 get_terminology and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/translate.html#Translate.Client.get_terminology">the boto3 documentation for details</a></p>
+</dd>
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-terminologies">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/service/translate/list_terminologies</code><a class="headerlink" href="#list-terminologies" title="Permalink to this headline">¶</a></h2>
+<p>Get the list of available Amazon Translate custom terminologies for this region</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>This is a proxy for boto3 get_terminology and returns the output from that SDK method.
+See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/translate.html#Translate.Client.list_terminologies">the boto3 documentation for details</a></p>
+</dd>
+<dt>Raises:</dt><dd><p>See the boto3 documentation for details
+500: Internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="create-system-configuration-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/system/configuration</code><a class="headerlink" href="#create-system-configuration-api" title="Permalink to this headline">¶</a></h2>
+<p>Add a new system configuration parameter</p>
+<ul class="simple">
+<li><p>Updates the MIE system configuration with a new parameter or changes the value of
+existing parameters</p></li>
+</ul>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;ParameterName&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="s2">&quot;ParameterValue&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Supported parameters:</p>
+<blockquote>
+<div><p>MaxConcurrentWorkflows</p>
+<blockquote>
+<div><p>Sets the maximum number of workflows that are allowed to run concurrently.
+Any new workflows that are added after MaxConcurrentWorkflows is reached are
+placed on a queue until capacity is freed by completing workflows.  Use this
+to help avoid throttling in service API calls from workflow operators.</p>
+<p>This setting is checked each time the WorkflowSchedulerLambda is run and may
+take up to 60 seconds to take effect.</p>
+</div></blockquote>
+</div></blockquote>
+<dl>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: The system configuration was set successfully successfully.
+400: Bad Request</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>an input value is invalid</p></li>
+</ul>
+</div></blockquote>
+<p>500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-system-configuration-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/system/configuration</code><a class="headerlink" href="#get-system-configuration-api" title="Permalink to this headline">¶</a></h2>
+<p>Get the current MIE system configuration</p>
+<ul class="simple">
+<li><p>Gets the current MIE system configuration parameter settings</p></li>
+</ul>
+<dl>
+<dt>Returns:</dt><dd><p>A list of dict containing the current MIE system configuration key-value pairs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span>
+    <span class="p">},</span>
+<span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>200: The system configuration was returned successfully.
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="version">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/version</code><a class="headerlink" href="#version" title="Permalink to this headline">¶</a></h2>
+<p>Get the workflow api and framework version numbers</p>
+<p>Returns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;ApiVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;vx.x.x&quot;</span><span class="p">,</span> <span class="s2">&quot;FrameworkVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;vx.x.x&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="chalice-route section" id="create-workflow-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow</code><a class="headerlink" href="#create-workflow-api" title="Permalink to this headline">¶</a></h2>
+<p>Create a workflow from a list of existing stages.</p>
+<p>A workflow is a pipeline of stages that are executed sequentially to transform and
+extract metadata for a set of MediaType objects.  Each stage must contain either a
+“Next” key indicating the next stage to execute or and “End” key indicating it
+is the last stage.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+    <span class="s2">&quot;StartAt&quot;</span><span class="p">:</span> <span class="n">string</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">starting</span> <span class="n">stage</span><span class="p">,</span>
+    <span class="s2">&quot;Stages&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Next&quot;</span><span class="p">:</span> <span class="s2">&quot;string - name of next stage&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A dict mapping keys to the corresponding workflow created including the
+AWS resources used to execute each stage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+    <span class="s2">&quot;StartAt&quot;</span><span class="p">:</span> <span class="n">string</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">starting</span> <span class="n">stage</span><span class="p">,</span>
+    <span class="s2">&quot;Stages&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="n">queueARN</span><span class="p">,</span>
+            <span class="s2">&quot;StateMachine&quot;</span><span class="p">:</span> <span class="n">stateMachineARN</span><span class="p">,</span>
+            <span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="n">stageConfigurationObject</span><span class="p">,</span>
+            <span class="s2">&quot;Next&quot;</span><span class="p">:</span> <span class="s2">&quot;string - name of next stage&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="n">queueARN</span><span class="p">,</span>
+            <span class="s2">&quot;StateMachine&quot;</span><span class="p">:</span> <span class="n">stateMachineARN</span><span class="p">,</span>
+            <span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="n">stageConfigurationObject</span><span class="p">,</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>200: The workflow was created successfully.
+400: Bad Request - one of the input stages was not found or was invalid
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-workflows">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow</code><a class="headerlink" href="#list-workflows" title="Permalink to this headline">¶</a></h2>
+<p>List all workflow defintions</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of workflow definitions.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflows returned sucessfully.
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="update-workflow-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method put property">PUT</em></span> <code class="chalice-path sig-name descname">/workflow</code><a class="headerlink" href="#update-workflow-api" title="Permalink to this headline">¶</a></h2>
+<p>Update a workflow from a list of existing stages.</p>
+<p>Update the definition of an existing workflow.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">string</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">workflow</span> <span class="n">to</span> <span class="n">modify</span><span class="p">,</span>
+    <span class="s2">&quot;StartAt&quot;</span><span class="p">:</span> <span class="n">string</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">starting</span> <span class="n">stage</span><span class="p">,</span>
+    <span class="s2">&quot;Stages&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Next&quot;</span><span class="p">:</span> <span class="s2">&quot;string - name of next stage&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A dict mapping keys to the corresponding workflow updated including the
+AWS resources used to execute each stage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">string</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">workflow</span> <span class="n">to</span> <span class="n">modify</span><span class="p">,</span>
+    <span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="n">Configuration</span> <span class="nb">object</span><span class="o">.</span>  <span class="n">Contains</span> <span class="n">the</span> <span class="n">default</span> <span class="n">configuration</span> <span class="k">for</span> <span class="n">the</span> <span class="n">workflow</span><span class="o">.</span>  <span class="n">Use</span> <span class="n">the</span>
+        <span class="n">GET</span> <span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">donfiguration</span><span class="o">/</span><span class="p">{</span><span class="n">WorkflowName</span><span class="p">}</span> <span class="n">API</span> <span class="n">to</span> <span class="n">get</span> <span class="n">the</span> <span class="n">current</span> <span class="n">setting</span> <span class="k">for</span> <span class="n">this</span> <span class="nb">object</span><span class="o">.</span>
+    <span class="s2">&quot;StartAt&quot;</span><span class="p">:</span> <span class="n">string</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">starting</span> <span class="n">stage</span><span class="p">,</span>
+    <span class="s2">&quot;Stages&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="n">queueARN</span><span class="p">,</span>
+            <span class="s2">&quot;StateMachine&quot;</span><span class="p">:</span> <span class="n">stateMachineARN</span><span class="p">,</span>
+            <span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="n">stageConfigurationObject</span><span class="p">,</span>
+            <span class="s2">&quot;Next&quot;</span><span class="p">:</span> <span class="s2">&quot;string - name of next stage&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="n">queueARN</span><span class="p">,</span>
+            <span class="s2">&quot;StateMachine&quot;</span><span class="p">:</span> <span class="n">stateMachineARN</span><span class="p">,</span>
+            <span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="n">stageConfigurationObject</span><span class="p">,</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>200: The workflow was updated successfully.
+400: Bad Request - one of the input stages was not found or was invalid
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-workflow-configuration-by-name">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/configuration/{Name}</code><a class="headerlink" href="#get-workflow-configuration-by-name" title="Permalink to this headline">¶</a></h2>
+<p>Get a workflow configruation object by name</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary contianing the workflow configuration.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflows returned sucessfully.
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="create-workflow-execution-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow/execution</code><a class="headerlink" href="#create-workflow-execution-api" title="Permalink to this headline">¶</a></h2>
+<p>Execute a workflow.</p>
+<p>The Body contains the name of the workflow to execute, at least one input
+media type within the media object.  A dictionary of stage configuration
+objects can be passed in to override the default configuration of the operations
+within the stages.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;Name&quot;</span><span class="p">:</span><span class="s2">&quot;Default&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="n">media</span><span class="o">-</span><span class="nb">object</span>
+<span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="p">{</span>
+    <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Operations&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;SplitAudio&quot;</span><span class="p">:</span> <span class="p">{</span>
+               <span class="s2">&quot;Enabled&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+               <span class="s2">&quot;MediaTypes&quot;</span><span class="p">:</span> <span class="p">{</span>
+                   <span class="s2">&quot;Video&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="o">/</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="s2">&quot;Audio&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="o">/</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="s2">&quot;Frame&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="o">/</span><span class="kc">False</span>
+               <span class="p">}</span>
+           <span class="p">},</span>
+       <span class="p">},</span>
+   <span class="p">}</span>
+   <span class="o">...</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A dict mapping keys to the corresponding workflow execution created including
+the WorkflowExecutionId, the AWS queue and state machine resources assiciated with
+the workflow execution and the current execution status of the workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+    <span class="s2">&quot;StartAt&quot;</span><span class="p">:</span> <span class="s2">&quot;Preprocess&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Stages&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;stage-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;NestedQueue&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="n">queueARN</span><span class="p">,</span>
+            <span class="s2">&quot;StateMachine&quot;</span><span class="p">:</span> <span class="n">stateMachineARN</span><span class="p">,</span>
+            <span class="s2">&quot;Next&quot;</span><span class="p">:</span> <span class="s2">&quot;Analysis&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;stage-name: {</span>
+            <span class="s2">&quot;Type&quot;</span><span class="p">:</span> <span class="s2">&quot;NestedQueue&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="n">queueARN</span><span class="p">,</span>
+            <span class="s2">&quot;StateMachine&quot;</span><span class="p">:</span> <span class="n">stateMachineARN</span><span class="p">,</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>200: The workflow execution was created successfully.
+400: Bad Request - the input workflow was not found or was invalid
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-workflow-executions">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/execution</code><a class="headerlink" href="#list-workflow-executions" title="Permalink to this headline">¶</a></h2>
+<p>List all workflow executions</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of workflow executions.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflow executions returned sucessfully.
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-workflow-executions-by-assetid">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/execution/asset/{AssetId}</code><a class="headerlink" href="#list-workflow-executions-by-assetid" title="Permalink to this headline">¶</a></h2>
+<p>Get workflow executions by AssetId</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of dictionaries containing the workflow executions matching the AssetId.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: Workflow executions returned sucessfully.
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-workflow-executions-by-status">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/execution/status/{Status}</code><a class="headerlink" href="#list-workflow-executions-by-status" title="Permalink to this headline">¶</a></h2>
+<p>Get all workflow executions with the specified status</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of dictionaries containing the workflow executions with the requested status</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflows returned sucessfully.
+404: Not found
+500: Internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="delete-workflow-execution">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/execution/{Id}</code><a class="headerlink" href="#delete-workflow-execution" title="Permalink to this headline">¶</a></h2>
+<p>Delete a workflow executions</p>
+<p>Returns:</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>200: Workflow execution deleted sucessfully.
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-workflow-execution-by-id">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/execution/{Id}</code><a class="headerlink" href="#get-workflow-execution-by-id" title="Permalink to this headline">¶</a></h2>
+<p>Get a workflow execution by id</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary containing the workflow execution.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: Workflow executions returned sucessfully.
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="update-workflow-execution">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method put property">PUT</em></span> <code class="chalice-path sig-name descname">/workflow/execution/{Id}</code><a class="headerlink" href="#update-workflow-execution" title="Permalink to this headline">¶</a></h2>
+<p>Update a workflow execution</p>
+<blockquote>
+<div><p>Options:</p>
+<blockquote>
+<div><p>Resume a workflow that is in a Waiting Status in a specific stage.</p>
+</div></blockquote>
+</div></blockquote>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;WaitingStageName&quot;</span><span class="p">:</span><span class="s2">&quot;&lt;stage-name&gt;&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A dict mapping keys to the corresponding workflow execution with its current status</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Id: string,</span>
+    <span class="s2">&quot;Status&quot;</span><span class="p">:</span> <span class="s2">&quot;Resumed&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>200: The workflow execution was updated successfully.
+400: Bad Request - the input stage was not found, the current stage did not match the WaitingStageName,</p>
+<blockquote>
+<div><p>or the Workflow Status was not “Waiting”</p>
+</div></blockquote>
+<p>500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-workflows-by-operator">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/list/operation/{OperatorName}</code><a class="headerlink" href="#list-workflows-by-operator" title="Permalink to this headline">¶</a></h2>
+<p>List all workflow defintions that contain an operator</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of workflow definitions.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflows returned sucessfully.
+500: Internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-workflows-by-stage">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/list/stage/{StageName}</code><a class="headerlink" href="#list-workflows-by-stage" title="Permalink to this headline">¶</a></h2>
+<p>List all workflow defintions that contain a stage</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of workflow definitions.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflows returned sucessfully.
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="create-operation-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow/operation</code><a class="headerlink" href="#create-operation-api" title="Permalink to this headline">¶</a></h2>
+<p>Create a new operation</p>
+<ul class="simple">
+<li><p>Generates an operation state machine using the operation lambda(s) provided</p></li>
+<li><p>Creates a singleton operator stage that can be used to run the operator as a single-operator
+stage in a workflow.</p></li>
+</ul>
+<p>Operators can be synchronous (Sync) or asynchronous (Async). Synchronous operators complete
+before returning control to the invoker, while asynchronous operators return control to the invoker
+when the operation is successfully initiated, but not complete. Asynchronous operators require
+an additional monitoring task to check the status of the operation.</p>
+<p>For more information on how to implemenent lambdas to be used in MIE operators, please
+refer to the MIE Developer Quick Start.</p>
+<p>Body:
+.. code-block:: python</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“Name”:”operation-name”,
+“Type”: [“Async”|”Sync”],
+“Configuration” : {</p>
+<blockquote>
+<div><blockquote>
+<div><p>“MediaType”: “Video”,
+“Enabled:”: True,
+“configuration1”: “value1”,
+“configuration2”: “value2”,
+…</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>“StartLambdaArn”:arn,
+“MonitorLambdaArn”:arn
+}</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl>
+<dt>Returns:</dt><dd><p>A dict mapping keys to the corresponding operation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+    <span class="s2">&quot;Type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Async&quot;</span><span class="o">|</span><span class="s2">&quot;Sync&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;Configuration&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;MediaType&quot;</span><span class="p">:</span> <span class="s2">&quot;Video|Frame|Audio|Text|...&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Enabled:&quot;</span><span class="p">:</span> <span class="n">boolean</span><span class="p">,</span>
+        <span class="s2">&quot;configuration1&quot;</span><span class="p">:</span> <span class="s2">&quot;value1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;configuration2&quot;</span><span class="p">:</span> <span class="s2">&quot;value2&quot;</span><span class="p">,</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+    <span class="s2">&quot;StartLambdaArn&quot;</span><span class="p">:</span><span class="n">arn</span><span class="p">,</span>
+    <span class="s2">&quot;MonitorLambdaArn&quot;</span><span class="p">:</span><span class="n">arn</span><span class="p">,</span>
+    <span class="s2">&quot;StateMachineAsl&quot;</span><span class="p">:</span> <span class="n">ASL</span><span class="o">-</span><span class="n">string</span>
+    <span class="s2">&quot;StageName&quot;</span><span class="p">:</span> <span class="n">string</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Raises:</dt><dd><p>200: The operation and stage was created successfully.
+400: Bad Request</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>one of the input lambdas was not found</p></li>
+<li><p>one or more of the required input keys is missing</p></li>
+<li><p>an input value is invalid</p></li>
+</ul>
+</div></blockquote>
+<p>409: Conflict
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-operations">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/operation</code><a class="headerlink" href="#list-operations" title="Permalink to this headline">¶</a></h2>
+<p>List all defined operators</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of operation definitions.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All operations returned sucessfully.
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="update-operation">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method put property">PUT</em></span> <code class="chalice-path sig-name descname">/workflow/operation</code><a class="headerlink" href="#update-operation" title="Permalink to this headline">¶</a></h2>
+<p>Update operation NOT IMPLEMENTED</p>
+</div>
+<div class="chalice-route section" id="delete-operation-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/operation/{Name}</code><a class="headerlink" href="#delete-operation-api" title="Permalink to this headline">¶</a></h2>
+<p>Delete a an operation</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary contianing the operation definition.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: Operation deleted sucessfully.
+400: Bad Request - there are dependent workflows and query parameter force=false
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-operation-by-name">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/operation/{Name}</code><a class="headerlink" href="#get-operation-by-name" title="Permalink to this headline">¶</a></h2>
+<p>Get an operation definition by name</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary containing the operation definition.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All operations returned sucessfully.
+404: Not found
+500: Internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="create-stage-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow/stage</code><a class="headerlink" href="#create-stage-api" title="Permalink to this headline">¶</a></h2>
+<p>Create a stage state machine from a list of existing operations.</p>
+<p>A stage is a set of operations that are grouped so they can be executed in parallel.
+When the stage is executed as part of a workflow, operations within a stage are executed as
+branches in a parallel Step Functions state.  The generated state machines status is tracked by the
+workflow engine control plane during execution.</p>
+<p>An optional Configuration for each operator in the stage can be input to override the
+default configuration for the stage.</p>
+<p>Body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;Name&quot;</span><span class="p">:</span><span class="s2">&quot;stage-name&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Operations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;operation-name1&quot;</span><span class="p">,</span> <span class="s2">&quot;operation-name2&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl>
+<dt>Returns:</dt><dd><p>A dict mapping keys to the corresponding stage created including
+the ARN of the state machine created.</p>
+<dl>
+<dt>{</dt><dd><p>“Name”: string,
+“Operations”: [</p>
+<blockquote>
+<div><p>“operation-name1”,
+“operation-name2”,
+…</p>
+</div></blockquote>
+<p>],
+“Configuration”: {</p>
+<blockquote>
+<div><p>“operation-name1”: operation-configuration-object1,
+“operation-name2”: operation-configuration-object1,
+…</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“Name”: “TestStage”,
+“Operations”: [</p>
+<blockquote>
+<div><p>“TestOperator”</p>
+</div></blockquote>
+<p>],
+“Configuration”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“TestOperator”: {</dt><dd><p>“MediaType”: “Video”,
+“Enabled”: true</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: The stage was created successfully.
+400: Bad Request - one of the input state machines was not found or was invalid
+409: Conflict
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="list-stages">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/stage</code><a class="headerlink" href="#list-stages" title="Permalink to this headline">¶</a></h2>
+<p>List all stage defintions</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A list of operation definitions.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All operations returned sucessfully.
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="update-stage">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method put property">PUT</em></span> <code class="chalice-path sig-name descname">/workflow/stage</code><a class="headerlink" href="#update-stage" title="Permalink to this headline">¶</a></h2>
+<p>Update a stage NOT IMPLEMENTED</p>
+<p>XXX</p>
+</div>
+<div class="chalice-route section" id="delete-stage-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/stage/{Name}</code><a class="headerlink" href="#delete-stage-api" title="Permalink to this headline">¶</a></h2>
+<p>Delete a stage</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary contianing the stage definition.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: Stage deleted sucessfully.
+400: Bad Request - there are dependent workflows and query parameter force=False
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-stage-by-name">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/stage/{Name}</code><a class="headerlink" href="#get-stage-by-name" title="Permalink to this headline">¶</a></h2>
+<p>Get a stage definition by name</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary contianing the stage definition.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All stages returned sucessfully.
+404: Not found
+500: Internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="delete-workflow-api">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/{Name}</code><a class="headerlink" href="#delete-workflow-api" title="Permalink to this headline">¶</a></h2>
+<p>Delete a workflow</p>
+<p>Returns:</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>200: Workflow deleted sucessfully.
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+<div class="chalice-route section" id="get-workflow-by-name">
+<h2 class="chalice-routename"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/{Name}</code><a class="headerlink" href="#get-workflow-by-name" title="Permalink to this headline">¶</a></h2>
+<p>Get a workflow definition by name</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A dictionary contianing the workflow definition.</p>
+</dd>
+<dt>Raises:</dt><dd><p>200: All workflows returned sucessfully.
+404: Not found
+500: ChaliceViewError - internal server error</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="../index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Documentation</a>
+                        
+                        <a href="dataplane.html" title="next chapter" class="next-page clearfix">Dataplaneapi →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="../index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="dataplane.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Workflowapi</a><ul>
+<li><a class="reference internal" href="#index"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/</code></a></li>
+<li><a class="reference internal" href="#create-vocabulary"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/create_vocabulary</code></a></li>
+<li><a class="reference internal" href="#delete-vocabulary"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/delete_vocabulary</code></a></li>
+<li><a class="reference internal" href="#download-vocabulary"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/download_vocabulary</code></a></li>
+<li><a class="reference internal" href="#get-vocabulary"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/transcribe/get_vocabulary</code></a></li>
+<li><a class="reference internal" href="#list-vocabularies"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/service/transcribe/list_vocabularies</code></a></li>
+<li><a class="reference internal" href="#create-terminology"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/create_terminology</code></a></li>
+<li><a class="reference internal" href="#delete-terminology"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/delete_terminology</code></a></li>
+<li><a class="reference internal" href="#download-terminology"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/download_terminology</code></a></li>
+<li><a class="reference internal" href="#get-terminology"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/service/translate/get_terminology</code></a></li>
+<li><a class="reference internal" href="#list-terminologies"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/service/translate/list_terminologies</code></a></li>
+<li><a class="reference internal" href="#create-system-configuration-api"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/system/configuration</code></a></li>
+<li><a class="reference internal" href="#get-system-configuration-api"><p>Duplicate implicit target name: “/system/configuration”.</p>
+</a></li>
+<li><a class="reference internal" href="#version"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/version</code></a></li>
+<li><a class="reference internal" href="#create-workflow-api"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow</code></a></li>
+<li><a class="reference internal" href="#list-workflows"><p>Duplicate implicit target name: “/workflow”.</p>
+</a></li>
+<li><a class="reference internal" href="#update-workflow-api"><p>Duplicate implicit target name: “/workflow”.</p>
+</a></li>
+<li><a class="reference internal" href="#get-workflow-configuration-by-name"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/configuration/{Name}</code></a></li>
+<li><a class="reference internal" href="#create-workflow-execution-api"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow/execution</code></a></li>
+<li><a class="reference internal" href="#list-workflow-executions"><p>Duplicate implicit target name: “/workflow/execution”.</p>
+</a></li>
+<li><a class="reference internal" href="#list-workflow-executions-by-assetid"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/execution/asset/{AssetId}</code></a></li>
+<li><a class="reference internal" href="#list-workflow-executions-by-status"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/execution/status/{Status}</code></a></li>
+<li><a class="reference internal" href="#delete-workflow-execution"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/execution/{Id}</code></a></li>
+<li><a class="reference internal" href="#get-workflow-execution-by-id"><p>Duplicate implicit target name: “/workflow/execution/{id}”.</p>
+</a></li>
+<li><a class="reference internal" href="#update-workflow-execution"><p>Duplicate implicit target name: “/workflow/execution/{id}”.</p>
+</a></li>
+<li><a class="reference internal" href="#list-workflows-by-operator"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/list/operation/{OperatorName}</code></a></li>
+<li><a class="reference internal" href="#list-workflows-by-stage"><span class="chalice-methodlist"><em class="chalice-method get property">GET</em></span> <code class="chalice-path sig-name descname">/workflow/list/stage/{StageName}</code></a></li>
+<li><a class="reference internal" href="#create-operation-api"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow/operation</code></a></li>
+<li><a class="reference internal" href="#list-operations"><p>Duplicate implicit target name: “/workflow/operation”.</p>
+</a></li>
+<li><a class="reference internal" href="#update-operation"><p>Duplicate implicit target name: “/workflow/operation”.</p>
+</a></li>
+<li><a class="reference internal" href="#delete-operation-api"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/operation/{Name}</code></a></li>
+<li><a class="reference internal" href="#get-operation-by-name"><p>Duplicate implicit target name: “/workflow/operation/{name}”.</p>
+</a></li>
+<li><a class="reference internal" href="#create-stage-api"><span class="chalice-methodlist"><em class="chalice-method post property">POST</em></span> <code class="chalice-path sig-name descname">/workflow/stage</code></a></li>
+<li><a class="reference internal" href="#list-stages"><p>Duplicate implicit target name: “/workflow/stage”.</p>
+</a></li>
+<li><a class="reference internal" href="#update-stage"><p>Duplicate implicit target name: “/workflow/stage”.</p>
+</a></li>
+<li><a class="reference internal" href="#delete-stage-api"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/stage/{Name}</code></a></li>
+<li><a class="reference internal" href="#get-stage-by-name"><p>Duplicate implicit target name: “/workflow/stage/{name}”.</p>
+</a></li>
+<li><a class="reference internal" href="#delete-workflow-api"><span class="chalice-methodlist"><em class="chalice-method delete property">DELETE</em></span> <code class="chalice-path sig-name descname">/workflow/{Name}</code></a></li>
+<li><a class="reference internal" href="#get-workflow-by-name"><p>Duplicate implicit target name: “/workflow/{name}”.</p>
+</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>
