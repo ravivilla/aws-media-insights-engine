@@ -24,7 +24,7 @@ Parameters:
   EnableXrayTrace:
     Description: Turn on Xray tracing on all entry points to the stack
     Type: String
-    Default: No
+    Default: Yes
     AllowedValues:
       - Yes
       - No
@@ -43,7 +43,7 @@ Parameters:
   SendAnonymousData:
     Description: (Optional) Send anonymous data about MIE performance to AWS to help improve the quality of this solution.
     Type: String
-    Default: Yes
+    Default: No
     AllowedValues:
       - Yes
       - No

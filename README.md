@@ -32,6 +32,15 @@ The Cloud Formation options for these one-click deploys are described in the [in
 Run the following commands to build and deploy MIE from scratch. Be sure to define values for `MIE_STACK_NAME` and `REGION` first.
 
 ```
+- Make sure you have `wget` installed
+- Add below environment variables
+export REGION=us-west-2
+export MIE_STACK_NAME=mie-ravivill-stack
+export VERSION=0.0.0
+export DATETIME=$(date '+%s')
+export DIST_OUTPUT_BUCKET=media-insights-engine-$DATETIME
+export TEMPLATE_OUTPUT_BUCKET=media-insights-engine-template-$DATETIME
+ 
 REGION=[specify a region]
 MIE_STACK_NAME=[specify a stack name]
 git clone https://github.com/awslabs/aws-media-insights-engine
@@ -41,10 +50,16 @@ VERSION=0.0.0
 DATETIME=$(date '+%s')
 DIST_OUTPUT_BUCKET=media-insights-engine-$DATETIME
 aws s3 mb s3://$DIST_OUTPUT_BUCKET-$REGION --region $REGION
+TEMPLATE_OUTPUT_BUCKET=media-insights-engine-template-$DATETIME
 aws s3 mb s3://$TEMPLATE_OUTPUT_BUCKET --region $REGION
-./build-s3-dist.sh --template-bucket $DIST_OUTPUT_BUCKET --code-bucket $DIST_OUTPUT_BUCKET --version $VERSION --region $REGION
+./build-s3-dist.sh --template-bucket $TEMPLATE_OUTPUT_BUCKET --code-bucket $DIST_OUTPUT_BUCKET --version $VERSION --region $REGION
 TEMPLATE={copy "Template to deploy" link from output of build script}
+export TEMPLATE_OUTPUT_BUCKET=media-insights-engine-template-$DATETIME
+#export TEMPLATE='https://media-insights-engine-template-1634774531.s3.us-west-2.amazonaws.com/aws-media-insights-engine/0.0.0/media-insights-stack.template'
+#Create Stack
 aws cloudformation create-stack --stack-name $MIE_STACK_NAME --template-url $TEMPLATE --region $REGION --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND --disable-rollback
+#or Update Stack
+aws cloudformation update-stack --stack-name $MIE_STACK_NAME --template-url $TEMPLATE --region $REGION --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 ```
 
 ## Outputs
